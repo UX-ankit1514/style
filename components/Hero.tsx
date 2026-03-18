@@ -1,57 +1,77 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 
-import React from 'react';
+const Spline = lazy(() => import('@splinetool/react-spline'));
+
+const SPLINE_SCENE_URL = 'https://prod.spline.design/HDIoZmquL5l5zq2G/scene.splinecode';
+
+function shouldLoadSpline(): boolean {
+  if (typeof window === 'undefined') return false;
+  const isMobile = window.innerWidth < 768;
+  const isLowEnd = navigator.hardwareConcurrency <= 2;
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  return !isMobile && !isLowEnd && !!gl;
+}
 
 const Hero: React.FC = () => {
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      // Manual scroll calculation to account for fixed header
-      const headerOffset = 85;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+  const [splineLoaded, setSplineLoaded] = useState(false);
+  const [canLoad, setCanLoad] = useState(false);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-      
-      // Update URL hash without jumping, safely ignoring errors in sandboxed environments
-      try {
-        window.history.pushState(null, '', `#${targetId}`);
-      } catch (err) {
-        // Ignore SecurityError in restricted environments
-      }
-    }
-  };
+  useEffect(() => {
+    setCanLoad(shouldLoadSpline());
+  }, []);
+
+
 
   return (
-    <section className="relative w-full pt-40 pb-20 px-6 bg-[#F5F2EB] text-center">
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="animate-fade-in-up w-full md:w-auto">
-          <span className="block text-xs md:text-sm font-medium uppercase tracking-[0.2em] text-[#A8A29E] mb-6">
-            Spring Collection 2025
-          </span>
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-normal text-[#2C2A26] tracking-tight mb-8 drop-shadow-sm">
-            Quiet <span className="italic text-[#5D5A53]">living.</span>
-          </h1>
-          <p className="max-w-lg mx-auto text-lg md:text-xl text-[#5D5A53] font-light leading-relaxed mb-12 text-shadow-sm">
-            Clothing designed to disappear into your life. <br/>
-            Warm materials, comfortable fits, natural forms.
-          </p>
-          
-          <a 
-            href="#products" 
-            onClick={(e) => handleNavClick(e, 'products')}
-            className="group relative px-10 py-4 bg-[#2C2A26] text-[#F5F2EB] rounded-full text-sm font-semibold uppercase tracking-widest hover:bg-[#433E38] transition-all duration-500 overflow-hidden shadow-lg hover:shadow-xl inline-block"
-          >
-            <span className="relative z-10">View Collection</span>
-          </a>
+    <section className="hero-section relative w-full overflow-hidden" style={{ height: '100vh', minHeight: '600px' }}>
+      
+      {/* ── Fallback gradient ── */}
+      <div
+        className="absolute inset-0 z-0 transition-opacity duration-700"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 40%, #e8e3da 0%, #d6d0c4 40%, #c4bdb0 100%)',
+          opacity: splineLoaded ? 0 : 1,
+        }}
+      />
+
+      {/* ── Spline 3D Scene ── */}
+      {canLoad && (
+        <Suspense fallback={null}>
+          <div className="absolute inset-0 z-[1]" style={{ pointerEvents: 'all' }}>
+            <Spline
+              scene={SPLINE_SCENE_URL}
+              onLoad={() => setSplineLoaded(true)}
+              style={{
+                width: '100%',
+                height: '100%',
+                opacity: splineLoaded ? 1 : 0,
+                transition: 'opacity 0.8s ease',
+              }}
+            />
+          </div>
+        </Suspense>
+      )}
+
+      {/* ── Subtle gradient overlay for text contrast ── */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, rgba(245,242,235,0.35) 0%, rgba(245,242,235,0.05) 40%, rgba(245,242,235,0.0) 60%, rgba(245,242,235,0.45) 100%)',
+        }}
+      />
+
+
+
+      {/* ── Scroll indicator ── */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[10] pointer-events-none">
+        <div className="scroll-indicator w-6 h-10 rounded-full border-2 border-[#2C2A26]/30 flex items-start justify-center pt-2">
+          <div className="w-1 h-2.5 rounded-full bg-[#2C2A26]/40 animate-scroll-dot" />
         </div>
       </div>
     </section>

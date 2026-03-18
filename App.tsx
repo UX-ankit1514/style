@@ -90,6 +90,17 @@ function App() {
         {view.type === 'home' && (
           <>
             <Hero />
+
+            {/* ── Fog / Cloud Transition ── */}
+            <div className="fog-transition relative" style={{ marginTop: '-120px', zIndex: 20 }}>
+              {/* Top fog layer */}
+              <div className="fog-layer fog-layer-1" />
+              {/* Middle fog layer — denser */}
+              <div className="fog-layer fog-layer-2" />
+              {/* Bottom fog layer — blends into collection bg */}
+              <div className="fog-layer fog-layer-3" />
+            </div>
+
             <ProductGrid onProductClick={(p) => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 setView({ type: 'product', product: p });

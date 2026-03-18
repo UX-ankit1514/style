@@ -1,0 +1,138 @@
+/* ── Spline scroll-hijack fix ── */
+body {
+  overflow: auto !important;
+}
+
+/* ── Hero section ── */
+.hero-section {
+  contain: layout style;
+}
+
+.hero-section canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  contain: strict;
+}
+
+/* ── Scroll indicator bounce ── */
+@keyframes scroll-dot {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(12px);
+    opacity: 1;
+  }
+}
+
+.animate-scroll-dot {
+  animation: scroll-dot 2s ease-in-out infinite;
+}
+
+/* ── Hero CTA button ── */
+.hero-cta {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.4s ease;
+  box-shadow: 0 4px 20px rgba(44, 42, 38, 0.15);
+}
+
+.hero-cta:hover {
+  transform: scale(1.05);
+  background-color: #433E38;
+  box-shadow: 0 8px 40px rgba(44, 42, 38, 0.3),
+              0 0 60px rgba(44, 42, 38, 0.08);
+}
+
+.hero-cta:active {
+  transform: scale(0.98);
+}
+
+/* ── Fog / Cloud Transition ── */
+.fog-transition {
+  position: relative;
+  height: 200px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.fog-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+.fog-layer-1 {
+  top: -40px;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 242, 235, 0) 0%,
+    rgba(245, 242, 235, 0.3) 30%,
+    rgba(245, 242, 235, 0.6) 60%,
+    rgba(245, 242, 235, 0.85) 100%
+  );
+  filter: blur(8px);
+  animation: fog-drift-1 8s ease-in-out infinite alternate;
+}
+
+.fog-layer-2 {
+  top: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 242, 235, 0) 0%,
+    rgba(245, 242, 235, 0.15) 25%,
+    rgba(245, 242, 235, 0.5) 50%,
+    rgba(245, 242, 235, 0.9) 80%,
+    rgba(245, 242, 235, 1) 100%
+  );
+  filter: blur(12px);
+  animation: fog-drift-2 11s ease-in-out infinite alternate;
+}
+
+.fog-layer-3 {
+  top: 60px;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 242, 235, 0.4) 0%,
+    rgba(245, 242, 235, 0.85) 40%,
+    rgba(245, 242, 235, 1) 70%
+  );
+  filter: blur(6px);
+  animation: fog-drift-3 14s ease-in-out infinite alternate;
+}
+
+@keyframes fog-drift-1 {
+  0% {
+    transform: translateY(0px) scaleY(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-6px) scaleY(1.04);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fog-drift-2 {
+  0% {
+    transform: translateY(0px) scaleY(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(4px) scaleY(1.02);
+    opacity: 1;
+  }
+}
+
+@keyframes fog-drift-3 {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
